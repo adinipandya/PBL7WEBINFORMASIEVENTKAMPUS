@@ -1,0 +1,554 @@
+/* ==================== BASE STYLING & UTILITIES ==================== */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #fff5dc; /* warna krem lembut */
+  position: relative;
+  min-height: 100vh;
+  z-index: 0; /* pastikan background di bawah navbar */
+}
+
+
+/* ======== NAVBAR ======== */
+.navbar-custom {
+  background: linear-gradient(to right, #f3b63a, #f5cd6f);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  padding: 0.7rem 2rem;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Brand logo */
+.navbar-brand img {
+  height: 55px;
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+  transform: scale(1.08);
+}
+
+/* Menu link */
+.nav-link {
+  color: #2c2c2c !important;
+  font-weight: bold;
+  padding: 0.6rem 1.4rem !important;
+  letter-spacing: 0.3px;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.05rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Garis bawah animasi */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.3s ease;
+}
+
+/* Hover dan aktif */
+.nav-link:hover::after,
+.nav-link:focus::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-link:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 6px rgba(255,255,255,0.4);
+}
+
+/* Responsif */
+.navbar-toggler {
+  border: none;
+  outline: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-nav {
+  gap: 5px;
+}
+
+
+/* ==================== MAIN CONTENT (TOP SECTION) ==================== */
+.main-content {
+    display: flex;
+    padding: 40px;
+    margin: 0 auto;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    background-color: #fff5dc; /* warna krem */
+}
+
+/* LEFT PANEL */
+.left-panel {
+    flex: 1;
+    padding-right: 40px;
+    min-width: 300px;
+    position: relative;
+    z-index: 0;
+    min-height: 400px;
+    background-color: #fff5dc; /* warna krem */
+}
+
+/* Logo abu-abu di belakang teks */
+.left-panel::after {
+    content: "";
+    position: absolute;
+    bottom: -170px; /* Nilai ini mungkin perlu disesuaikan manual */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 550px;
+    height: 550px; 
+    background-image: url('./Logo.png'); /* Pastikan path ini benar */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.85; 
+    filter: grayscale(100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Supaya teks dan dropdown tetap di atas logo */
+.left-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+    flex: 1;
+    min-width: 400px;
+    background-color: #fff5dc; /* warna krem */
+}
+
+/* ==================== TEKS & DROPDOWN ==================== */
+.title-section h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.description p {
+    font-size: 1.1em;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.category-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    border: 1px solid #000;
+    background-color: transparent; 
+    border-radius: 5px;
+    font-size: 1em;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="%23333" d="M5.5 8l4.5 5 4.5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    box-shadow: none; 
+}
+/* ==================== IMAGE ==================== */
+.building-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* ==================== BODY ==================== */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #fff5dc; /* warna krem lembut */
+  position: relative;
+  min-height: 100vh;
+  z-index: 0;
+}
+
+/* ==================== BAGIAN LAINNYA ==================== */
+.gallery-announcement-section,
+.announcement-section,
+.event-section,
+.agenda-section,
+.contact-section,
+.footer-bottom {
+    background-color: #fff5dc; /* warna krem untuk semua section */
+}
+
+/* Pastikan tidak ada bagian Bootstrap menimpa warna */
+.container,
+.container-fluid {
+    background-color: transparent;
+}
+
+
+/* ==================== GALERI GAMBAR OVERLAY ==================== */
+.gallery-announcement-section {
+    background-color: #fcf8ec; /* Warna latar belakang kuning muda */
+    padding: 20px 0 0 0; 
+    text-align: center;
+    overflow: hidden; 
+}
+
+.gallery-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px; 
+    max-width: 100%; 
+    padding-left: 10px; 
+    padding-right: 10px;
+    margin-left: -10px;
+    margin-right: -10px;
+    flex-wrap: nowrap;
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.gallery-item {
+    position: relative;
+    flex-shrink: 0; 
+    flex-basis: calc(25% - 10px); 
+    width: calc(25% - 10px); 
+    height: 250px; 
+    max-width: none; 
+    cursor: pointer; 
+    transition: opacity 0.3s;
+}
+
+.gallery-item:hover {
+    opacity: 0.9;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
+/* Overlay oranye transparan */
+.gallery-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(246, 192, 79, 0.6); 
+    z-index: 2;
+}
+/* ==================== KARTU ACARA (Pengumuman Judul & Detail) ==================== */
+.announcement-section {
+    background-color: #fcf8ec; 
+    padding-bottom: 0; 
+}
+
+.announcement-title {
+    font-size: 3em;
+    font-weight: bold;
+    color: #333333; 
+    text-align: center;
+    padding: 40px 0 20px 0; 
+    margin: 0;
+}
+
+.event-section {
+    background-color: #f1b34a; /* Latar belakang oranye kartu */
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; 
+}
+
+.event-card {
+    background-color: #ffffff; 
+    color: #333;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 300px; 
+    text-align: center;
+    flex-grow: 1; 
+    min-height: 350px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+}
+
+.event-card h2 {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.event-card p {
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.detail-button {
+    display: inline-block;
+    background-color: #f38f38; /* Warna tombol oranye */
+    color: #ffffff;
+    padding: 10px 25px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.detail-button:hover {
+    background-color: #e5812d;
+}
+
+/* ==================== AGENDA POLIBATAM (KALENDER) ==================== */
+/* --- Header Kuning di Atas --- */
+.top-header-yellow {
+    height: 30px; 
+    background-color: #f6c04f; 
+    width: 100%;
+}
+
+/* --- Agenda Section (Container untuk Kartu Agenda) --- */
+.agenda-section {
+    background-image: linear-gradient(rgba(252, 248, 236, 0.7), rgba(252, 248, 236, 0.7)), url('gedung_polibatam.jpg'); 
+    background-size: cover;
+    background-position: center;
+    padding: 80px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    flex-grow: 1; 
+    box-shadow: inset 0 -10px 15px -5px rgba(0,0,0,0.1); 
+}
+
+/* --- Agenda Card (Kartu Putih Utama) --- */
+.agenda-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+    display: flex;
+    max-width: 900px; 
+    width: 100%;
+    box-sizing: border-box; 
+    position: relative; /* Untuk z-index dari konten */
+    z-index: 1; /* Pastikan kartu di atas background body */
+}
+
+/* --- Calendar Box (Kiri) --- */
+.calendar-box {
+    flex: 1;
+    padding-right: 30px;
+    border-right: 1px solid #eee; 
+    position: relative;
+    z-index: 2; /* Pastikan konten kalender di atas kartu */
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.month-year-display {
+    font-weight: bold;
+    font-size: 1.4em; 
+    color: #333;
+    margin: 0; 
+}
+
+.month-navigation .nav-button {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.1em;
+    color: #555;
+    cursor: pointer;
+    margin: 0 5px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.month-navigation .nav-button:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+}
+
+/* --- Calendar Table --- */
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em; 
+    color: #555; 
+}
+
+.calendar-table th {
+    font-weight: normal;
+    padding: 10px 5px; 
+    color: #888; 
+}
+
+.calendar-table td {
+    text-align: center;
+    padding: 12px 5px; 
+    cursor: pointer;
+    border-radius: 50%; 
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.calendar-table td:hover:not(.inactive) {
+    background-color: #f0f8ff; 
+}
+
+.calendar-table td.inactive {
+    color: #ccc; 
+    cursor: default;
+}
+
+.calendar-table td.inactive:hover {
+    background-color: transparent; 
+}
+
+.calendar-table td.today {
+    background-color: #cce7ff; 
+    color: #007bff; 
+    font-weight: bold;
+}
+
+/* --- Agenda Title Box (Kanan) --- */
+.agenda-title-box {
+    flex: 1;
+    padding-left: 30px;
+    display: flex;
+    align-items: flex-start; 
+    justify-content: flex-start; 
+    position: relative;
+    z-index: 2; /* Pastikan konten agenda di atas kartu */
+}
+
+.agenda-title-text {
+    color: #444; 
+    font-size: 1.8em; 
+    font-weight: bold;
+    margin: 0; 
+}
+
+/* ==================== HUBUNGI KAMI SECTION ==================== */
+.contact-section {
+    background-color: #fcf8ec; /* Warna krem untuk section ini */
+    padding: 50px 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px; /* Jarak antar map dan info kontak */
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.05); /* Sedikit shadow ke atas */
+}
+
+.map-container {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    border-radius: 8px; /* Sudut sedikit membulat */
+    overflow: hidden; /* Pastikan gambar tidak keluar dari radius */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Shadow pada map */
+}
+
+.map-image {
+    width: 100%;
+    height: auto;
+    display: block; /* Hapus spasi di bawah gambar */
+}
+
+.contact-info {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+    text-align: left; /* <-- DIUBAH DARI 'right' MENJADI 'left' */
+}
+
+.contact-info h2 {
+    font-size: 2.2em;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.contact-info p {
+    line-height: 1.8;
+    color: #555;
+    margin: 5px 0;
+    font-size: 0.95em;
+}
+
+/* ==================== FOOTER ==================== */
+.footer-bottom { 
+    background-color: #f6c04f; /* Warna kuning dari desain */
+    color: #333; /* Teks lebih gelap agar kontras */
+    padding: 20px 40px; /* Padding lebih besar */
+    font-size: 0.9em;
+}
+
+.footer-content {
+    max-width: 1200px; 
+    margin: 0 auto; 
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* 1fr: Kolom Kiri (Ikon) | auto: Kolom Tengah (Copyright) | 1fr: Kolom Kanan (Kosong) */
+    align-items: center; /* Pusatkan item secara vertikal */
+    gap: 10px;
+    padding: 0 40px; /* Tambahkan padding agar ikon tidak menempel di tepi */
+}
+.footer-social {
+    grid-column: 1;
+    display: flex;
+    justify-content: flex-start; /* Pastikan ikon rata kiri dalam kolom ini */
+    gap: 15px; 
+}
+
+.footer-social a {
+    color: #333; /* Warna ikon lebih gelap */
+    font-size: 1.2em;
+    transition: color 0.2s;
+}
+
+.footer-social a:hover {
+    color: #fff; /* Warna ikon saat hover */
+}
+
+.footer-bottom p {
+    margin: 0;
+    text-align: center; /* DIUBAH DARI 'right' MENJADI 'center' */
+}
