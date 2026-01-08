@@ -4,31 +4,24 @@ require_once __DIR__ . "/config/db.php";
 $id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
 if ($id <= 0) { header("Location: index.php"); exit; }
 
-$stmt = $conn->prepare("SELECT id, title, content FROM news WHERE id=? AND is_active=1 LIMIT 1");
+/* ambil 1 berita */
+$stmt = $conn->prepare("SELECT id, title, content, cover_image FROM news WHERE id=? AND is_active=1 LIMIT 1");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $news = $stmt->get_result()->fetch_assoc();
 if (!$news) { header("Location: index.php"); exit; }
 
-$sqlGallery = "
-  SELECT 
-    n.id,
-    n.title,
-    COALESCE(
-      (SELECT ni.image_path
-       FROM news_images ni
-       WHERE ni.news_id = n.id
-       ORDER BY ni.sort_order ASC, ni.id ASC
-       LIMIT 1
-      ),
-      n.cover_image
-    ) AS cover
-  FROM news n
-  WHERE n.is_active = 1
-  ORDER BY n.published_at DESC, n.id DESC
-  LIMIT 4
+/* ambil gambar KHUSUS berita ini */
+$sqlImages = "
+  SELECT image_path
+  FROM news_images
+  WHERE news_id = ?
+  ORDER BY sort_order ASC, id ASC
 ";
-$newsGallery = $conn->query($sqlGallery)->fetch_all(MYSQLI_ASSOC);
+$stmtImg = $conn->prepare($sqlImages);
+$stmtImg->bind_param("i", $id);
+$stmtImg->execute();
+$images = $stmtImg->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -71,40 +64,51 @@ $newsGallery = $conn->query($sqlGallery)->fetch_all(MYSQLI_ASSOC);
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-custom">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="./index.php">
-        <img src="logopolibatam.png" alt="Logo Polibatam" />
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="./index.php">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link" href="./index.php#kontak">Kontak</a></li>
-          <li class="nav-item"><a class="nav-link" href="./Tentang.php">Tentang</a></li>
-          <li class="nav-item"><a class="nav-link" href="./login.php">Login</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
-  <div class="content-container">
-    <div class="main-content">
-      <div class="image-column">
-        <?php foreach ($newsGallery as $n): ?>
-          <img src="<?= htmlspecialchars(($n["cover"] ? "assets/images/" . basename($n["cover"]) : "placeholder.jpg")) ?>" alt="<?= htmlspecialchars($n["title"]) ?>">
-          <?php endforeach; ?>
-      </div>
-
-      <div class="content-text">
-        <h1><?= htmlspecialchars($news["title"]) ?></h1>
-        <div style="white-space:pre-line;"><?= htmlspecialchars($news["content"]) ?></div>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="./index.php">
+      <img src="logopolibatam.png" alt="Logo Polibatam" />
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="./index.php">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="./index.php#kontak">Kontak</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Tentang.php">Tentang</a></li>
+        <li class="nav-item"><a class="nav-link" href="./login.php">Login</a></li>
+      </ul>
     </div>
   </div>
+</nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="content-container">
+  <div class="main-content">
+
+    <div class="image-column">
+      <?php if ($images->num_rows > 0): ?>
+        <?php while ($img = $images->fetch_assoc()): ?>
+          <img 
+            src="assets/images/<?= htmlspecialchars(basename($img["image_path"])) ?>" 
+            alt="<?= htmlspecialchars($news["title"]) ?>">
+        <?php endwhile; ?>
+      <?php elseif (!empty($news["cover_image"])): ?>
+        <img 
+          src="assets/images/<?= htmlspecialchars(basename($news["cover_image"])) ?>" 
+          alt="<?= htmlspecialchars($news["title"]) ?>">
+      <?php endif; ?>
+    </div>
+
+    <div class="content-text">
+      <h1><?= htmlspecialchars($news["title"]) ?></h1>
+      <div style="white-space:pre-line;"><?= htmlspecialchars($news["content"]) ?></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
