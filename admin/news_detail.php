@@ -2,22 +2,13 @@
 session_start();
 require_once __DIR__ . "/../config/db.php";
 
-/** =========================
- *  AUTH STATE (navbar)
- *  ========================= */
 $isLoggedIn = !empty($_SESSION["logged_in"]);
 $isAdmin    = $isLoggedIn && (($_SESSION["role"] ?? "") === "admin");
 $username   = $isLoggedIn ? ($_SESSION["username"] ?? "") : "";
 
-/** =========================
- *  AMBIL ID BERITA
- *  ========================= */
 $id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
 if ($id <= 0) { header("Location: index.php"); exit; }
 
-/** =========================
- *  AMBIL 1 BERITA
- *  ========================= */
 $stmt = $conn->prepare("
   SELECT id, title, content, cover_image 
   FROM news 
@@ -29,9 +20,6 @@ $stmt->execute();
 $news = $stmt->get_result()->fetch_assoc();
 if (!$news) { header("Location: index.php"); exit; }
 
-/** =========================
- *  AMBIL GAMBAR KHUSUS BERITA INI
- *  ========================= */
 $sqlImages = "
   SELECT image_path 
   FROM news_images 
@@ -142,3 +130,4 @@ $images = $stmtImg->get_result();
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
