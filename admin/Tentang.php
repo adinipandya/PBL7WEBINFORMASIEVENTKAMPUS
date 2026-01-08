@@ -2,10 +2,6 @@
 session_start();
 require_once __DIR__ . "/../config/db.php";
 
-
-/** =========================
- *  1) AUTH STATE (navbar)
- *  ========================= */
 $isLoggedIn = !empty($_SESSION["logged_in"]);
 $isAdmin    = $isLoggedIn && (($_SESSION["role"] ?? "") === "admin");
 $username   = $isLoggedIn ? ($_SESSION["username"] ?? "") : "";
@@ -17,143 +13,89 @@ $username   = $isLoggedIn ? ($_SESSION["username"] ?? "") : "";
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tentang | Event Polibatam</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKx36l/4sfa96hLyw7bA5y3JdGNg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
   <style>
-    /* ===== Gaya Umum ===== */
     body {
       margin: 0;
+      
       font-family: "Poppins", sans-serif;
-      background: url("gedungpolibatam.jpg") no-repeat center center fixed;
+      background: url("gedung_polibatam.jpg") no-repeat center center fixed;
       background-size: cover;
       color: #222;
     }
 
-    /* ===== Overlay Latar Belakang ===== */
     body::before {
       content: "";
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.5);
+      inset: 0;
+      background: rgba(255,255,255,0.5);
       backdrop-filter: blur(3px);
       z-index: -1;
+      animation: fadeBg 1.2s ease forwards;
     }
 
-    /* ===== Navbar ===== */
     .navbar-custom {
-            background: linear-gradient(to right, #f3b63a, #f5cd6f);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            padding: 0.7rem 2rem; /* tambah ruang atas-bawah */
-            transition: all 0.3s ease-in-out;
-        }
+      background: linear-gradient(to right, #f3b63a, #f5cd6f);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      padding: 0.7rem 2rem;
+    }
 
-        /* Brand logo */
-        .navbar-brand img {
-            height: 55px;
-            transition: transform 0.3s ease;
-        }
+    .navbar-brand img {
+      height: 55px;
+      transition: transform .3s ease;
+    }
 
-        .navbar-brand img:hover {
-            transform: scale(1.08); /* efek hover lembut di logo */
-        }
+    .navbar-brand img:hover {
+      transform: scale(1.08);
+    }
 
-        /* Menu link */
-        .nav-link {
-            color: #2c2c2c !important;
-            padding: 0.6rem 1.4rem !important;
-            letter-spacing: 0.3px;
-            font-family: "Poppins", sans-serif;
-            font-size: 1.05rem;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        /* Efek garis bawah animasi */
-        .nav-link::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 60%;
-            height: 2px;
-            background-color: #ffffff;
-            border-radius: 2px;
-            transition: transform 0.3s ease;
-        }
-
-        /* Hover dan aktif */
-        .nav-link:hover::after,
-        .nav-link:focus::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-
-        .nav-link:hover {
-            color: #ffffff !important;
-            text-shadow: 0 0 6px rgba(255,255,255,0.4);
-        }
-
-        /* Responsif */
-        .navbar-toggler {
-            border: none;
-            outline: none;
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: none;
-        }
-
-        .navbar-nav {
-            gap: 5px;
-        }
-
-    /* ===== Kontainer Utama ===== */
-    .content-container {
+    .nav-link {
+      color: #2c2c2c !important;
+      padding: 0.6rem 1.4rem !important;
+      font-size: 1.05rem;
       position: relative;
+      transition: .3s;
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) scaleX(0);
+      width: 60%;
+      height: 2px;
+      background: #fff;
+      transition: .3s;
+    }
+
+    .nav-link:hover::after {
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    .nav-link:hover {
+      color: #fff !important;
+    }
+
+    .content-container {
+      min-height: 100vh;
+      padding: 130px 20px 60px;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      min-height: 100vh;
-      padding: 120px 20px 60px; /* ✅ tambahkan jarak atas agar tidak ketutupan navbar */
-      z-index: 1;
-      box-sizing: border-box;
     }
 
-    /* ===== Card Utama ===== */
     .content-card {
-      position: relative;
-      background: rgba(233, 161, 35, 0.85); /* Warna #E9A123 dengan opacity */
+      background: rgba(233,161,35,0.88);
       border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 5px 20px rgba(0,0,0,.25);
       padding: 50px 60px;
       max-width: 900px;
-      color: #000;
       text-align: justify;
-      overflow: hidden;
-    }
-
-    /* ===== Logo Samar bacground ===== */
-    .content-container::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url("gedung_polibatam.jpg") no-repeat center center;
-      background-size: cover; /* agar penuh */
-      opacity: 0.25; /* sesuaikan transparansi */
-      filter: grayscale(30%) brightness(95%); /* opsional efek lembut */
-      z-index: 0;
-    }
-
-    .content-card h1, .content-card p {
-      position: relative;
-      z-index: 1;
+      animation: fadeUp 1s ease forwards;
     }
 
     .content-card h1 {
@@ -161,77 +103,86 @@ $username   = $isLoggedIn ? ($_SESSION["username"] ?? "") : "";
       font-size: 2.3rem;
       font-weight: 700;
       margin-bottom: 25px;
+      animation: fadeUp .8s ease forwards;
     }
 
     .content-card p {
-      line-height: 1.7;
       font-size: 1.05rem;
+      line-height: 1.7;
       margin-bottom: 18px;
+      opacity: 0;
+      animation: fadeUp .9s ease forwards;
+    }
+
+    .content-card p:nth-of-type(1){animation-delay:.3s}
+    .content-card p:nth-of-type(2){animation-delay:.5s}
+    .content-card p:nth-of-type(3){animation-delay:.7s}
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(40px) scale(.96); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    @keyframes fadeBg {
+      from { opacity:0; }
+      to { opacity:1; }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Header -->
-   <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-    <div class="container-fluid px-4">
-      <a class="navbar-brand" href="./index.php">
-        <img src="logopolibatam.png" alt="Logo Polibatam" class="d-inline-block align-text-top">
-      </a>
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="./index.php">
+      <img src="logopolibatam.png" alt="Logo Polibatam">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="./index.php">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="./index.php#kontak">Kontak</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Tentang.php">Tentang</a></li>
 
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="./index.php">Beranda</a></li>
-                <li class="nav-item"><a class="nav-link" href="./index.php#kontak">Kontak</a></li>
-                <li class="nav-item"><a class="nav-link" href="./Tentang.php">Tentang</a></li>
-
-                <?php if ($isAdmin): ?>
-            <li class="nav-item"><a class="nav-link" href="./tampilanadmin.php">Admin</a></li>
-            <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
-          <?php elseif ($isLoggedIn): ?>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#" aria-disabled="true">
-                Login sebagai: <?= htmlspecialchars($username) ?>
-              </a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
-          <?php else: ?>
-            <li class="nav-item"><a class="nav-link" href="./login.php">Login</a></li>
-          <?php endif; ?>
-            </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Konten Tentang -->
-  <div class="content-container">
-    <div class="content-card">
-      <h1>Tentang</h1>
-      <p>
-        Website Event Polibatam dibuat sebagai pusat informasi kegiatan kampus Politeknik Negeri Batam (Polibatam).
-        Platform ini hadir untuk memudahkan mahasiswa, dosen, dan masyarakat dalam mengetahui berbagai kegiatan kampus
-        seperti seminar, lokakarya, kompetisi, bazar, hingga festival yang diselenggarakan sepanjang tahun.
-        Melalui website ini, Polibatam ingin menghadirkan wadah informasi yang cepat, mudah diakses, dan menarik secara visual.
-      </p>
-      <p>
-        Sebagai institusi pendidikan vokasi, Polibatam berkomitmen menciptakan lingkungan belajar yang aktif, kolaboratif, dan inovatif.
-        Setiap kegiatan yang ditampilkan di website ini menjadi bagian penting dalam pengembangan potensi mahasiswa,
-        mendorong kreativitas, serta memperkuat hubungan antara dunia akademik dan industri.
-        Website ini juga dilengkapi fitur pencarian dan filter acara agar pengguna dapat dengan mudah menemukan kegiatan sesuai minatnya.
-      </p>
-      <p>
-        Website Event Polibatam bukan hanya media informasi, tetapi juga simbol semangat kampus dalam memanfaatkan teknologi digital
-        untuk memperluas akses pengetahuan dan kolaborasi. Melalui inisiatif ini, diharapkan setiap mahasiswa dapat terlibat aktif
-        dalam berbagai kegiatan kampus, memperkaya pengalaman belajar, serta berkontribusi dalam mewujudkan kampus yang dinamis, kreatif, dan inspiratif.
-      </p>
+        <?php if ($isAdmin): ?>
+          <li class="nav-item"><a class="nav-link" href="./tampilanadmin.php">Admin</a></li>
+          <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
+        <?php elseif ($isLoggedIn): ?>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Login sebagai: <?= htmlspecialchars($username) ?></a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
+        <?php else: ?>
+          <li class="nav-item"><a class="nav-link" href="./login.php">Login</a></li>
+        <?php endif; ?>
+      </ul>
     </div>
   </div>
+</nav>
 
+<div class="content-container">
+  <div class="content-card">
+    <h1>Tentang</h1>
+    <p>
+      Website Event Polibatam dibuat sebagai pusat informasi kegiatan kampus Politeknik Negeri Batam (Polibatam).
+      Platform ini hadir untuk memudahkan mahasiswa, dosen, dan masyarakat dalam mengetahui berbagai kegiatan kampus
+      seperti seminar, lokakarya, kompetisi, bazar, hingga festival yang diselenggarakan sepanjang tahun.
+    </p>
+    <p>
+      Sebagai institusi pendidikan vokasi, Polibatam berkomitmen menciptakan lingkungan belajar yang aktif, kolaboratif, dan inovatif.
+      Setiap kegiatan yang ditampilkan di website ini menjadi bagian penting dalam pengembangan potensi mahasiswa,
+      mendorong kreativitas, serta memperkuat hubungan antara dunia akademik dan industri.
+    </p>
+    <p>
+      Website Event Polibatam bukan hanya media informasi, tetapi juga simbol semangat kampus dalam memanfaatkan teknologi digital
+      untuk memperluas akses pengetahuan dan kolaborasi, serta mendorong partisipasi aktif seluruh sivitas akademika.
+    </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </html>
