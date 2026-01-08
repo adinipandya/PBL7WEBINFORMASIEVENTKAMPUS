@@ -2,43 +2,46 @@
 session_start();
 require_once __DIR__ . "/../config/db.php";
 
-
 /** =========================
- *  1) AUTH STATE (navbar)
+ *  AUTH STATE (navbar)
  *  ========================= */
 $isLoggedIn = !empty($_SESSION["logged_in"]);
 $isAdmin    = $isLoggedIn && (($_SESSION["role"] ?? "") === "admin");
 $username   = $isLoggedIn ? ($_SESSION["username"] ?? "") : "";
 
-
+/** =========================
+ *  AMBIL ID BERITA
+ *  ========================= */
 $id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
 if ($id <= 0) { header("Location: index.php"); exit; }
 
-$stmt = $conn->prepare("SELECT id, title, content FROM news WHERE id=? AND is_active=1 LIMIT 1");
+/** =========================
+ *  AMBIL 1 BERITA
+ *  ========================= */
+$stmt = $conn->prepare("
+  SELECT id, title, content, cover_image 
+  FROM news 
+  WHERE id = ? AND is_active = 1 
+  LIMIT 1
+");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $news = $stmt->get_result()->fetch_assoc();
 if (!$news) { header("Location: index.php"); exit; }
 
-$sqlGallery = "
-  SELECT 
-    n.id,
-    n.title,
-    COALESCE(
-      (SELECT ni.image_path
-       FROM news_images ni
-       WHERE ni.news_id = n.id
-       ORDER BY ni.sort_order ASC, ni.id ASC
-       LIMIT 1
-      ),
-      n.cover_image
-    ) AS cover
-  FROM news n
-  WHERE n.is_active = 1
-  ORDER BY n.published_at DESC, n.id DESC
-  LIMIT 4
+/** =========================
+ *  AMBIL GAMBAR KHUSUS BERITA INI
+ *  ========================= */
+$sqlImages = "
+  SELECT image_path 
+  FROM news_images 
+  WHERE news_id = ?
+  ORDER BY sort_order ASC, id ASC
 ";
-$newsGallery = $conn->query($sqlGallery)->fetch_all(MYSQLI_ASSOC);
+$stmtImg = $conn->prepare($sqlImages);
+$stmtImg->bind_param("i", $id);
+$stmtImg->execute();
+$images = $stmtImg->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -70,7 +73,6 @@ $newsGallery = $conn->query($sqlGallery)->fetch_all(MYSQLI_ASSOC);
     .content-text { flex:1; padding:10px 20px; }
     .content-text h1 { font-size:2rem; font-weight:700; margin-bottom:20px; }
     .content-text p, .content-text li { font-size:1rem; line-height:1.7; color:#333; }
-    .content-text ul { padding-left:20px; }
 
     @media (max-width:768px) {
       .main-content { flex-direction:column; }
@@ -81,52 +83,62 @@ $newsGallery = $conn->query($sqlGallery)->fetch_all(MYSQLI_ASSOC);
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-custom">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="./index.php">
-        <img src="logopolibatam.png" alt="Logo Polibatam" />
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="./index.php">Beranda</a></li>
-          <li class="nav-item"><a class="nav-link" href="./index.php#kontak">Kontak</a></li>
-          <li class="nav-item"><a class="nav-link" href="./Tentang.php">Tentang</a></li>
-          <?php if ($isAdmin): ?>
-            <li class="nav-item"><a class="nav-link" href="./tampilanadmin.php">Admin</a></li>
-            <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
-          <?php elseif ($isLoggedIn): ?>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#" aria-disabled="true">
-                Login sebagai: <?= htmlspecialchars($username) ?>
-              </a>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
-          <?php else: ?>
-            <li class="nav-item"><a class="nav-link" href="./login.php">Login</a></li>
-          <?php endif; ?>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
-  <div class="content-container">
-    <div class="main-content">
-      <div class="image-column">
-        <?php foreach ($newsGallery as $n): ?>
-          <img src="<?= htmlspecialchars(($n["cover"] ? "../assets/images/" . basename($n["cover"]) : "placeholder.jpg")) ?>" alt="<?= htmlspecialchars($n["title"]) ?>">
-          <?php endforeach; ?>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="./index.php">
+      <img src="logopolibatam.png" alt="Logo Polibatam" />
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="./index.php">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link" href="./index.php#kontak">Kontak</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Tentang.php">Tentang</a></li>
 
-      <div class="content-text">
-        <h1><?= htmlspecialchars($news["title"]) ?></h1>
-        <div style="white-space:pre-line;"><?= htmlspecialchars($news["content"]) ?></div>
-      </div>
+        <?php if ($isAdmin): ?>
+          <li class="nav-item"><a class="nav-link" href="./tampilanadmin.php">Admin</a></li>
+          <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
+        <?php elseif ($isLoggedIn): ?>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Login sebagai: <?= htmlspecialchars($username) ?></a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="./auth/logout.php">Logout</a></li>
+        <?php else: ?>
+          <li class="nav-item"><a class="nav-link" href="./login.php">Login</a></li>
+        <?php endif; ?>
+      </ul>
     </div>
   </div>
+</nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div class="content-container">
+  <div class="main-content">
+
+    <div class="image-column">
+      <?php if ($images->num_rows > 0): ?>
+        <?php while ($img = $images->fetch_assoc()): ?>
+          <img 
+            src="../assets/images/<?= htmlspecialchars(basename($img["image_path"])) ?>" 
+            alt="<?= htmlspecialchars($news["title"]) ?>">
+        <?php endwhile; ?>
+      <?php elseif (!empty($news["cover_image"])): ?>
+        <img 
+          src="../assets/images/<?= htmlspecialchars(basename($news["cover_image"])) ?>" 
+          alt="<?= htmlspecialchars($news["title"]) ?>">
+      <?php endif; ?>
+    </div>
+
+    <div class="content-text">
+      <h1><?= htmlspecialchars($news["title"]) ?></h1>
+      <div style="white-space:pre-line;"><?= htmlspecialchars($news["content"]) ?></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
